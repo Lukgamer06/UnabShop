@@ -38,6 +38,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
@@ -53,10 +54,13 @@ import com.google.firebase.auth.auth
 @Preview
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginScreen(onClickRegister : () -> Unit = {}, onSuccessfullLogin: () -> Unit = {}) {
+fun LoginScreen(
+    onClickRegister: () -> Unit = {},
+    onSuccessfullLogin: () -> Unit = {}
+) {
 
     val auth = Firebase.auth
-    val activity = LocalView.current.context as Activity
+    val activity = LocalView.current.context as MainActivity
 
     //Estados
     var inputEmail by remember { mutableStateOf("") }
@@ -112,54 +116,59 @@ fun LoginScreen(onClickRegister : () -> Unit = {}, onSuccessfullLogin: () -> Uni
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
                 supportingText = {
-                    if (emailError.isNotEmpty()){
+                    if (emailError.isNotEmpty()) {
                         Text(
                             text = emailError,
                             color = Color.Red
                         )
                     }
                 }
-                )
+            )
 
             Spacer(modifier = Modifier.height(16.dp))
 
             // Campo de Contraseña
             OutlinedTextField(
                 value = inputPassword,
-                onValueChange = { inputPassword = it},
+                onValueChange = { inputPassword = it },
                 label = { Text("Contraseña") },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Lock,
                         contentDescription = "Contraseña",
-                        tint = Color(0xFF666666) // Color gris
+                        tint = Color(0xFF666666)
                     )
                 },
-                visualTransformation = PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = Color(0xFF6200EE), // Color morado
-                    unfocusedBorderColor = Color(0xFFCCCCCC) // Color gris claro
+                    focusedBorderColor = Color(0xFF6200EE),
+                    unfocusedBorderColor = Color(0xFFCCCCCC)
                 ),
                 supportingText = {
-                    if (passwordError.isNotEmpty()){
-                        Text(
-                            text = passwordError,
-                            color = Color.Red
-                        )
+                    if (passwordError.isNotEmpty()) {
+                        Text(passwordError, color = Color.Red)
                     }
-                }
+                },
+                visualTransformation = PasswordVisualTransformation(),
+                keyboardOptions = KeyboardOptions(
+                    capitalization = KeyboardCapitalization.None,
+                    autoCorrect = false,
+                    keyboardType = KeyboardType.Password
+                )
             )
+
+
             Spacer(modifier = Modifier.height(24.dp))
 
             //Texto Error sesion
-            if (msgError.isNotEmpty()){
+            if (msgError.isNotEmpty()) {
                 Text(
                     msgError,
                     color = Color.Red,
-                    modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 8.dp)
                 )
             }
 
@@ -173,13 +182,13 @@ fun LoginScreen(onClickRegister : () -> Unit = {}, onSuccessfullLogin: () -> Uni
                     passwordError = validatePassword(inputPassword).second
 
 
-                    if (isvalidEmail && isvalidPassword){
-                        auth.signInWithEmailAndPassword(inputEmail,inputPassword)
+                    if (isvalidEmail && isvalidPassword) {
+                        auth.signInWithEmailAndPassword(inputEmail, inputPassword)
                             .addOnCompleteListener(activity) { task ->
-                                if (task.isSuccessful){
+                                if (task.isSuccessful) {
                                     onSuccessfullLogin()
                                 } else {
-                                    msgError = when(task.exception){
+                                    msgError = when (task.exception) {
                                         is FirebaseAuthInvalidCredentialsException -> "Correo o Contraseña Incorrectos"
                                         is FirebaseAuthInvalidUserException -> "No existe una cuenta con este correo"
                                         else -> "Error al iniciar sesión. Intenta nuevamente"
@@ -187,7 +196,7 @@ fun LoginScreen(onClickRegister : () -> Unit = {}, onSuccessfullLogin: () -> Uni
                                 }
                             }
                     } else {
-
+                        msgError = "Por favor, completa todos los campos correctamente"
                     }
                 },
                 modifier = Modifier
