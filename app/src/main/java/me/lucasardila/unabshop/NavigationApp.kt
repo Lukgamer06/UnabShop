@@ -27,12 +27,22 @@ fun NavigationApp() {
             )
         }
         composable("register") {
-            RegisterScreen(onClickBack = {
-                navController.popBackStack()
-            })
+            RegisterScreen(
+                onClickBack = {
+                    navController.popBackStack()
+                },
+                onSuccesfullRegister = {
+                    navController.navigate("home"){
+                        popUpTo(0)
+                    }
+                })
         }
         composable("home") {
-            HomeScreen()
+            HomeScreen(onClickLogout = {
+                navController.navigate("home"){
+                    popUpTo(0)
+                }
+            })
         }
     }
 }

@@ -50,7 +50,7 @@ import com.google.firebase.auth.auth
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RegisterScreen(onClickBack : () -> Unit = {},onSuccesfullRegister: () -> Unit) {
+fun RegisterScreen(onClickBack : () -> Unit = {}, onSuccesfullRegister: () -> Unit) {
 
     val auth = Firebase.auth
     val activity = LocalView.current.context as Activity
