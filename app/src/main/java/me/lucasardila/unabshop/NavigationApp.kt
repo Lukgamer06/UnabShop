@@ -39,7 +39,7 @@ fun NavigationApp() {
         }
         composable("home") {
             HomeScreen(onClickLogout = {
-                navController.navigate("home"){
+                navController.navigate("login"){
                     popUpTo(0)
                 }
             })
